@@ -213,6 +213,8 @@ def main_worker(gpu, ngpus_per_node, args):
         transforms.RandomGrayscale(p=0.2),
         transforms.RandomApply([moco.loader.GaussianBlur([.1, 2.])], p=1.0),
         transforms.RandomHorizontalFlip(),
+        transforms.RandomApply([transforms.RandomContrast(0.5)], p=0.5),  # 随机对比度
+        transforms.RandomApply([transforms.RandomBrightness(0.5)], p=0.5),  # 随机明暗亮度
         transforms.ToTensor(),
         normalize
     ]
@@ -226,6 +228,8 @@ def main_worker(gpu, ngpus_per_node, args):
         transforms.RandomApply([moco.loader.GaussianBlur([.1, 2.])], p=0.1),
         transforms.RandomApply([moco.loader.Solarize()], p=0.2),
         transforms.RandomHorizontalFlip(),
+        transforms.RandomApply([transforms.RandomContrast(0.5)], p=0.5),  # 随机对比度
+        transforms.RandomApply([transforms.RandomBrightness(0.5)], p=0.5),  # 随机明暗亮度
         transforms.ToTensor(),
         normalize
     ]
