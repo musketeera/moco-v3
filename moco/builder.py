@@ -64,8 +64,6 @@ class MoCo(nn.Module):
         # normalize
         q = nn.functional.normalize(q, dim=1)
         k = nn.functional.normalize(k, dim=1)
-        # gather all targets
-        k = concat_all_gather(k)
         # Einstein sum is more intuitive
         logits = torch.einsum('nc,mc->nm', [q, k]) / self.T
         N = logits.shape[0]  # batch size per GPU
@@ -121,17 +119,3 @@ class MoCo_ViT(MoCo):
         # predictor
         self.predictor = self._build_mlp(2, dim, mlp_dim, dim)
 
-
-# utils
-@torch.no_grad()
-def concat_all_gather(tensor):
-    """
-    Performs all_gather operation on the provided tensors.
-    *** Warning ***: torch.distributed.all_gather has no gradient.
-    """
-    tensors_gather = [torch.ones_like(tensor)
-        for _ in range(torch.distributed.get_world_size())]
-    torch.distributed.all_gather(tensors_gather, tensor, async_op=False)
-
-    output = torch.cat(tensors_gather, dim=0)
-    return output
