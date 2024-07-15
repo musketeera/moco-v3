@@ -8,7 +8,25 @@ from PIL import Image, ImageFilter, ImageOps
 import math
 import random
 import torchvision.transforms.functional as tf
+from torch.utils.data import Dataset
+import os
 
+class CustomDataset(Dataset):
+        def __init__(self, root_dir, transform=None):
+            self.root_dir = root_dir
+            self.transform = transform
+            self.image_paths = [os.path.join(root_dir, fname) for fname in os.listdir(root_dir) if fname.endswith(('png', 'jpg', 'jpeg'))]
+
+        def __len__(self):
+            return len(self.image_paths)
+
+        def __getitem__(self, idx):
+            img_path = self.image_paths[idx]
+            image = Image.open(img_path)
+            image = image.convert('RGB')
+            if self.transform:
+                image = self.transform(image)
+            return image
 
 class TwoCropsTransform:
     """Take two random crops of one image"""
