@@ -105,6 +105,16 @@ python main_moco.py \
   --multiprocessing-distributed --world-size 2 --rank 0 \
   [your imagenet-folder with train and val folders]
 ```
+
+```
+运行自己的代码
+python main_moco.py \
+  --seed 42 \
+  -j 16 -b 32\
+  --moco-m-cos --crop-min=.2 \
+  /mnt/e/speedplus/synthetic/images
+```
+
 On the second node, run the same command with `--rank 1`.
 With a batch size of 4096, the training can fit into 2 nodes with a total of 16 Volta 32G GPUs. 
 
