@@ -96,7 +96,7 @@ parser.add_argument('--stop-grad-conv1', action='store_true',
                     help='stop-grad after first conv, or patch embedding')
 
 # other upgrades
-parser.add_argument('--optimizer', default='lars', type=str,
+parser.add_argument('--optimizer', default='adamw', type=str,
                     choices=['lars', 'adamw'],
                     help='optimizer used (default: lars)')
 parser.add_argument('--warmup-epochs', default=10, type=int, metavar='N',
@@ -163,7 +163,7 @@ def main_worker(gpu, ngpus_per_node, args):
                                 weight_decay=args.weight_decay)
         
     scaler = torch.cuda.amp.GradScaler()
-    summary_writer = SummaryWriter() if args.rank == 0 else None
+    summary_writer = SummaryWriter()
 
     # optionally resume from a checkpoint
     if args.resume:
@@ -200,8 +200,8 @@ def main_worker(gpu, ngpus_per_node, args):
         transforms.RandomGrayscale(p=0.2),
         transforms.RandomApply([moco.loader.GaussianBlur([.1, 2.])], p=1.0),
         transforms.RandomHorizontalFlip(),
-        transforms.RandomApply([transforms.RandomContrast(0.3)], p=0.5),  # 随机对比度
-        transforms.RandomApply([transforms.RandomBrightness(0.3)], p=0.5),  # 随机明暗亮度
+        transforms.RandomApply([transforms.ColorJitter(contrast=0.3)], p=0.5),  # 随机对比度
+        transforms.RandomApply([transforms.ColorJitter(brightness=0.3)], p=0.5),  # 随机明暗亮度
         transforms.ToTensor(),
         normalize
     ]
@@ -215,8 +215,8 @@ def main_worker(gpu, ngpus_per_node, args):
         transforms.RandomApply([moco.loader.GaussianBlur([.1, 2.])], p=0.1),
         transforms.RandomApply([moco.loader.Solarize()], p=0.2),
         transforms.RandomHorizontalFlip(),
-        transforms.RandomApply([transforms.RandomContrast(0.3)], p=0.5),  # 随机对比度
-        transforms.RandomApply([transforms.RandomBrightness(0.3)], p=0.5),  # 随机明暗亮度
+        transforms.RandomApply([transforms.ColorJitter(contrast=0.3)], p=0.5),  # 随机对比度
+        transforms.RandomApply([transforms.ColorJitter(brightness=0.3)], p=0.5),  # 随机明暗亮度
         transforms.ToTensor(),
         normalize
     ]
